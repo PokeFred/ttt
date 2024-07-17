@@ -1,0 +1,28 @@
+name: Release
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    release:
+        strategy:
+            fail-fast: false
+        runs-on: ubuntu-latest
+        steps:
+            -   name: checkout the repository
+                uses: actions/checkout@v4.1.7
+            -   name: setup nodejs
+                uses: actions/setup-node@v4.0.3
+                with:
+                    node-version: 18
+            -   name: setup rust
+                uses: actions-rs/toolchain@v1.0.6
+                with:
+                    profile: minimal
+                    toolchain: stable
+            -   name: install dependencies
+                run: npm install
+            -   name: build the project
+                run: npm run build
