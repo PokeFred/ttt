@@ -6,31 +6,71 @@ on:
             - main
 
 jobs:
-    release:
+    release-windows:
+        strategy:
+            fail-fast: false
+        runs-on: windows-2022
+        steps:
+            -   name: Checkout the Repository
+                uses: actions/checkout@v4.1.7
+
+            -   name: Setup NodeJS
+                uses: actions/setup-node@v4.0.3
+                with:
+                    node-version: 18
+
+            -   name: Setup Rust
+                uses: dtolnay/rust-toolchain@stable
+
+            -   name: Caching Rust Builds
+                uses: swatinem/rust-cache@v2.7.3
+                with:
+                    workspaces: "./src-tauri -> target"
+
+            -   name: Install Dependencies
+                run: npm install
+
+            -   name: Build the Project
+                run: npm run build
+
+            -   name: release the build
+                uses: actions/upload-artifact@v4.3.4
+                with:
+                    name: windows-app
+                    path: D:\a\ttt\ttt\src-tauri\target\release\app.exe
+
+    release-linux:
         strategy:
             fail-fast: false
         runs-on: ubuntu-22.04
         steps:
-            -   name: checkout the repository
+            -   name: Checkout the Repository
                 uses: actions/checkout@v4.1.7
-            -   name: setup linux dependencies
+
+            -   name: Setup Linux Dependencies
                 run: sudo apt-get update && sudo apt-get install libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf -y
-            -   name: setup nodejs
+
+            -   name: Setup NodeJS
                 uses: actions/setup-node@v4.0.3
                 with:
                     node-version: 18
-            -   name: setup rust
+
+            -   name: Setup Rust
                 uses: dtolnay/rust-toolchain@stable
-            -   name: caching rust dependencies
+
+            -   name: Caching Rust Builds
                 uses: swatinem/rust-cache@v2.7.3
                 with:
                     workspaces: "./src-tauri -> target"
-            -   name: install dependencies
+
+            -   name: Install Dependencies
                 run: npm install
-            -   name: build the project
+
+            -   name: Build the Project
                 run: npm run build
+
             -   name: release the build
                 uses: actions/upload-artifact@v4.3.4
                 with:
-                    name: ttt-linux
+                    name: linux-app
                     path: /home/runner/work/ttt/ttt/src-tauri/target/release/app
