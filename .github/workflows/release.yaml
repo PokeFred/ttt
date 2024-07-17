@@ -9,10 +9,12 @@ jobs:
     release:
         strategy:
             fail-fast: false
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         steps:
             -   name: checkout the repository
                 uses: actions/checkout@v4.1.7
+            -   run: sudo apt-get update
+            -   run: sudo apt-get install libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf -y
             -   name: setup nodejs
                 uses: actions/setup-node@v4.0.3
                 with:
